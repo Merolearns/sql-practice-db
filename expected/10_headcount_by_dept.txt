@@ -1,0 +1,11 @@
+-- Sample answer for queries/10_headcount_by_dept.sql
+-- Column names + first rows. Your results should match exactly (the seed is fixed).
+
+department        headcount  avg_salary
+----------------  ---------  ----------
+Engineering       55         139582.0  
+Customer Support  40         64650.0   
+Sales             35         93857.0   
+Operations        25         95120.0   
+Marketing         25         98200.0   
+Finance           20         112750.0  

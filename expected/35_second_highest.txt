@@ -1,0 +1,11 @@
+-- Sample answer for queries/35_second_highest.sql
+-- Column names + first rows. Your results should match exactly (the seed is fixed).
+
+department        second_highest_salary
+----------------  ---------------------
+Customer Support  84000                
+Engineering       169000               
+Finance           143000               
+Marketing         124000               
+Operations        115000               
+Sales             134000               

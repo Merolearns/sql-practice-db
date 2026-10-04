@@ -1,0 +1,15 @@
+-- Sample answer for queries/33_vs_dept_avg.sql
+-- Column names + first rows. Your results should match exactly (the seed is fixed).
+
+name              department   salary  dept_avg  diff_vs_avg
+----------------  -----------  ------  --------  -----------
+Marcus Davis      Sales        135000  93857.0   41143.0    
+Aisha Mitchell    Sales        134000  93857.0   40143.0    
+Lena Collins      Sales        133000  93857.0   39143.0    
+Nathan Adams      Finance      147000  112750.0  34250.0    
+Grace Brown       Sales        127000  93857.0   33143.0    
+Joshua Young      Engineering  172000  139582.0  32418.0    
+Kevin Stewart     Engineering  172000  139582.0  32418.0    
+Chloe Rogers      Finance      143000  112750.0  30250.0    
+Chloe Campbell    Sales        124000  93857.0   30143.0    
+Fatima Garcia     Engineering  169000  139582.0  29418.0    

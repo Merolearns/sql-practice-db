@@ -1,0 +1,15 @@
+-- Sample answer for queries/26_employee_managers.sql
+-- Column names + first rows. Your results should match exactly (the seed is fixed).
+
+employee         manager        
+---------------  ---------------
+Aaron Anderson   Aaron Hernandez
+Aaron Hernandez  Marcus Davis   
+Aisha Mitchell   Aria Collins   
+Aisha Patel      David Brown    
+Aisha Thomas     Kevin Johnson  
+Andrew Edwards   Grace Martin   
+Andrew Miller    Mia Thomas     
+Andrew Patel     Grace Brown    
+Aria Collins     Grace Brown    
+Aria Davis       Yuki Nelson    

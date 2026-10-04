@@ -1,0 +1,8 @@
+-- Sample answer for queries/38_top_salesperson_per_quarter.sql
+-- Column names + first rows. Your results should match exactly (the seed is fixed).
+
+name            quarter  total 
+--------------  -------  ------
+Zoe Gonzalez    2026-Q1  211600
+Aria Collins    2026-Q2  240900
+Brian Anderson  2026-Q3  256000

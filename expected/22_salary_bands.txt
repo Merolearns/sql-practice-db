@@ -1,0 +1,15 @@
+-- Sample answer for queries/22_salary_bands.sql
+-- Column names + first rows. Your results should match exactly (the seed is fixed).
+
+name              salary  band  
+----------------  ------  ------
+Joshua Young      172000  senior
+Kevin Stewart     172000  senior
+Fatima Garcia     169000  senior
+Michael Anderson  169000  senior
+Daniel Hernandez  169000  senior
+Linda Hernandez   169000  senior
+Nina Evans        168000  senior
+Tom Stewart       166000  senior
+Sam Phillips      166000  senior
+Zoe Anderson      166000  senior

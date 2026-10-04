@@ -1,0 +1,15 @@
+-- Sample answer for queries/15_above_avg_salary.sql
+-- Column names + first rows. Your results should match exactly (the seed is fixed).
+
+name              salary
+----------------  ------
+Joshua Young      172000
+Kevin Stewart     172000
+Fatima Garcia     169000
+Michael Anderson  169000
+Daniel Hernandez  169000
+Linda Hernandez   169000
+Nina Evans        168000
+Tom Stewart       166000
+Sam Phillips      166000
+Zoe Anderson      166000

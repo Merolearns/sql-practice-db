@@ -1,0 +1,6 @@
+-- Sample answer for queries/07_company_stats.sql
+-- Column names + first rows. Your results should match exactly (the seed is fixed).
+
+headcount  avg_salary  lowest_salary  highest_salary
+---------  ----------  -------------  --------------
+200        103180.0    45000          172000        

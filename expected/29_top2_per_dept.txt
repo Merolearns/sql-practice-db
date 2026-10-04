@@ -1,0 +1,15 @@
+-- Sample answer for queries/29_top2_per_dept.sql
+-- Column names + first rows. Your results should match exactly (the seed is fixed).
+
+department        name            salary
+----------------  --------------  ------
+Customer Support  Zoe Mitchell    85000 
+Customer Support  Robert Patel    84000 
+Engineering       Joshua Young    172000
+Engineering       Kevin Stewart   172000
+Finance           Nathan Adams    147000
+Finance           Chloe Rogers    143000
+Marketing         Jason Morris    126000
+Marketing         Ella Clark      124000
+Operations        Grace Morris    118000
+Operations        Lily Turner     118000

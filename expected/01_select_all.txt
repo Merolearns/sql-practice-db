@@ -1,0 +1,15 @@
+-- Sample answer for queries/01_select_all.sql
+-- Column names + first rows. Your results should match exactly (the seed is fixed).
+
+id   name               salary
+---  -----------------  ------
+1    Nina Nguyen        98000 
+2    Mia Thomas         113000
+3    Tom Stewart        166000
+4    Yuki Hall          99000 
+5    Sarah Anderson     125000
+6    Fatima Garcia      169000
+7    Sam Phillips       166000
+8    Joshua Young       172000
+9    James Morris       116000
+10   Grace Martin       115000
