@@ -52,5 +52,5 @@ The schema is deliberately small so you can hold the whole thing in your head: 5
 
 ## Notes
 
-- `gen_queries.py` is the script I used to write out the 40 query files — it's the source of truth if you want to tweak all of them at once.
+- `gen_queries.py` is the script I used to write out the 40 query files — it's the source of truth if you want to tweak all of them at once. Run `python3 gen_queries.py --verify` after editing to check every query still runs against `company.db`.
 - `company.db` is generated and gitignored. Never commit it.

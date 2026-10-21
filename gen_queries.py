@@ -2,8 +2,11 @@
 """Write the 40 numbered practice queries into queries/.
 
 Each file: a plain-English question as a -- comment, then the query.
-All queries are verified to run against company.db (see verify step).
+Pass --verify to also run every query against company.db and confirm
+none of them blow up (needs ./build.sh first).
 """
+import sqlite3
+import sys
 from pathlib import Path
 
 OUT = Path(__file__).with_name("queries")
@@ -406,7 +409,34 @@ ORDER BY q1 + q2 + q3 + q4 DESC
 LIMIT 15;"""),
 ]
 
-for filename, question, sql in QUERIES:
-    (OUT / filename).write_text(f"-- {question}\n{sql}\n")
+def verify() -> None:
+    """Run every query against company.db; exit nonzero on any failure."""
+    db = Path(__file__).with_name("company.db")
+    if not db.exists():
+        print(f"{db} not found -- run ./build.sh first")
+        raise SystemExit(1)
+    con = sqlite3.connect(db)
+    failed = 0
+    for filename, _, sql in QUERIES:
+        try:
+            con.execute(sql)
+        except sqlite3.Error as e:
+            failed += 1
+            print(f"FAIL {filename}: {e}")
+    con.close()
+    if failed:
+        raise SystemExit(f"{failed}/{len(QUERIES)} queries failed")
+    print(f"All {len(QUERIES)} queries run OK against {db.name}")
 
-print(f"Wrote {len(QUERIES)} query files to {OUT}")
+
+def main() -> None:
+    for filename, question, sql in QUERIES:
+        (OUT / filename).write_text(f"-- {question}\n{sql}\n")
+    print(f"Wrote {len(QUERIES)} query files to {OUT}")
+
+    if "--verify" in sys.argv[1:]:
+        verify()
+
+
+if __name__ == "__main__":
+    main()
