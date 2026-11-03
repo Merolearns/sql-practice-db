@@ -9,6 +9,7 @@ A tiny fake company database plus 40 SQL practice queries that go from "what's a
 - `build.sh` — builds `company.db` from scratch
 - `queries/` — 40 numbered `.sql` files, easiest first. Each one starts with the question in plain English, then the query
 - `expected/` — sample answers (columns + first rows) for 10 of the queries, so you can check your work
+- `check.py` — checks your answer for one of those 10 against its sample answer
 
 All data is randomly generated and fictional. No real people, no real company.
 
@@ -24,7 +25,15 @@ This creates `company.db`. Rebuild any time to reset everything.
 
 ## How to use the queries
 
-Pick a query file, read the question at the top, and try to write it yourself in a blank file. Then compare with the version in `queries/`. For 10 of them you can also check your output against `expected/`.
+Pick a query file, read the question at the top, and try to write it yourself in a blank file. Then compare with the version in `queries/`. For 10 of them you can also check your work automatically:
+
+```bash
+python3 check.py 26          # or: python3 check.py queries/26_employee_managers.sql
+```
+
+`check.py` runs your answer against the fixed-seed database and compares
+the column names plus the first rows with the sample in `expected/`.
+It exits 0 on a match and shows the first differing row otherwise.
 
 ```bash
 sqlite3 company.db < queries/01_select_all.sql
