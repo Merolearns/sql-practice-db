@@ -34,6 +34,8 @@ python3 check.py 26          # or: python3 check.py queries/26_employee_managers
 `check.py` runs your answer against the fixed-seed database and compares
 the column names plus the first rows with the sample in `expected/`.
 It exits 0 on a match and shows the first differing row otherwise.
+A query that fails to run (or isn't a SELECT) prints the error and exits 1
+instead of a traceback.
 
 ```bash
 sqlite3 company.db < queries/01_select_all.sql

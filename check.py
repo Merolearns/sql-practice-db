@@ -69,7 +69,17 @@ def main(argv):
                 "the covered ones are listed with: python3 check.py")
 
     want_cols, want_rows = load_expected(expected_path)
-    cur = sqlite3.connect(DB).execute(query_path.read_text(encoding="utf-8"))
+    try:
+        cur = sqlite3.connect(DB).execute(query_path.read_text(encoding="utf-8"))
+    except sqlite3.Error as e:
+        # A learner's broken query used to die with a raw traceback.
+        print(f"your query failed to run: {e}")
+        return 1
+    if cur.description is None:
+        # e.g. DELETE/UPDATE: ran fine, but there's nothing to compare.
+        print("your query ran but returned no columns -- "
+              "check.py only checks SELECT queries")
+        return 1
     got_cols = [d[0] for d in cur.description]
     got_rows = [[str(v) for v in row] for row in cur.fetchmany(len(want_rows))]
 
