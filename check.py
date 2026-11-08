@@ -58,7 +58,9 @@ def resolve(arg):
 
 def main(argv):
     if len(argv) != 2:
-        print(__doc__.splitlines()[2].strip().replace("    ", " "))
+        print("usage: python3 check.py <number|query-file>")
+        print("  e.g. python3 check.py 26")
+        print("       python3 check.py queries/26_employee_managers.sql")
         print("\ncovered:", ", ".join(sorted(p.stem for p in EXPECTED.glob("*.txt"))))
         return 2
     query_path, expected_path = resolve(argv[1])
