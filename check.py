@@ -44,8 +44,12 @@ def load_expected(path):
 
 def resolve(arg):
     """queries/<nn>_*.sql from '26' or a path. Returns (query_path, expected_path)."""
-    if arg.endswith(".sql") and Path(arg).exists():
+    if arg.endswith(".sql"):
+        # A typo'd path used to fall through to the number lookup and
+        # report the confusing "no query #queries/26_typo.sql".
         query_path = Path(arg)
+        if not query_path.exists():
+            raise SystemExit(f"no such file: {arg}")
     else:
         num = arg.zfill(2)
         matches = sorted(QUERIES.glob(f"{num}_*.sql"))
