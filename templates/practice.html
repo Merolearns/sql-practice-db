@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Try your own SQL — sql-practice-db{% endblock %}
+{% block content %}
+
+<div class="card">
+  <h2 class="section-title">Try your own SQL</h2>
+  <p class="card-text">Write any SELECT against the company database and
+    see the result. The connection is read-only and only SELECT (and
+    WITH ... SELECT) statements are accepted — nothing you type here can
+    change the data.</p>
+
+  <form method="post">
+    <div class="field">
+      <label for="sql">Your query</label>
+      <textarea id="sql" name="sql" rows="8" spellcheck="false">{{ sql }}</textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">Run query</button>
+      <a class="btn btn-ghost" href="{{ url_for('index') }}">Back to the query index</a>
+    </div>
+  </form>
+
+  {% if error %}
+  <div class="alert alert-error">{{ error }}</div>
+  {% endif %}
+
+  {% if cols is not none %}
+  <h3 class="sub-title">Result — {{ rows | length }} row{{ "s" if rows | length != 1 }}
+    {% if rows | length == max_rows %}(capped at {{ max_rows }}){% endif %}</h3>
+  {% if rows %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>{% for c in cols %}<th>{{ c }}</th>{% endfor %}</tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>{% for v in row %}<td>{{ v | fmt if v is not none else "—" }}</td>{% endfor %}</tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="empty">The query ran but returned no rows.</p>
+  {% endif %}
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2 class="section-title">Ideas to try</h2>
+  <ul class="checks">
+    <li><code>SELECT name, salary FROM employees ORDER BY salary DESC LIMIT 5;</code> — the five best-paid people.</li>
+    <li><code>SELECT dept_id, COUNT(*) FROM employees GROUP BY dept_id;</code> — headcount per department (by id).</li>
+    <li><code>SELECT strftime('%Y-%m', sale_date) AS month, SUM(amount) FROM sales GROUP BY month;</code> — sales by month.</li>
+  </ul>
+  <p class="io-hint">Stuck? The 40 worked queries on the
+    <a href="{{ url_for('index') }}">home page</a> cover the same patterns,
+    easiest first.</p>
+</div>
+
+{% endblock %}

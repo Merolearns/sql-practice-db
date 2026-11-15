@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}sql-practice-db — 40 SQL practice queries{% endblock %}
+{% block content %}
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <span class="stat-value">{{ stats.headcount }}</span>
+    <span class="stat-label">employees</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-value">{{ stats.departments }}</span>
+    <span class="stat-label">departments</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-value">{{ stats.projects }}</span>
+    <span class="stat-label">projects</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-value">{{ stats.sales }}</span>
+    <span class="stat-label">sales</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-value">${{ "{:,}".format(stats.avg_salary) }}</span>
+    <span class="stat-label">average salary</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-value">${{ "{:,}".format(stats.total_sales) }}</span>
+    <span class="stat-label">total sales</span>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="section-title">The database</h2>
+  <p class="card-text">Five tables, obvious foreign keys, small enough to
+    hold in your head. Click a table to see its columns and first rows.</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>table</th><th>columns</th><th>rows</th></tr>
+      </thead>
+      <tbody>
+        {% for t in schema %}
+        <tr>
+          <td><a href="{{ url_for('schema_page', table=t.name) }}">{{ t.name }}</a></td>
+          <td class="mono">{{ t.columns | join(", ") }}</td>
+          <td class="amount">{{ t.rows }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="section-title">The 40 queries</h2>
+  <p class="card-text">Easiest first. Click one to read the question, see
+    the SQL, run it, and — for the ten with a sample answer — check it
+    against the expected result.</p>
+  {% for group in groups %}
+  <h3 class="sub-title">{{ group.label }}</h3>
+  <ul class="query-list">
+    {% for q in group.queries %}
+    <li>
+      <span class="qnum">{{ q.num_str }}.</span>
+      <a href="{{ url_for('query_page', num=q.num) }}">{{ q.question }}</a>
+      {% if q.covered %}<span class="badge">has sample answer</span>{% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% endfor %}
+</div>
+
+<div class="card">
+  <h2 class="section-title">Write your own</h2>
+  <p class="card-text">Got a question the 40 don't cover? Write any SELECT
+    and run it against the same database.</p>
+  <a class="btn btn-primary" href="{{ url_for('practice') }}">Open the SQL runner</a>
+</div>
+
+{% endblock %}

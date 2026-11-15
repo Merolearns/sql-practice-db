@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Query {{ q.num_str }} — sql-practice-db{% endblock %}
+{% block content %}
+
+<p class="crumb"><a href="{{ url_for('index') }}">&larr; All 40 queries</a></p>
+
+<div class="card">
+  <h2 class="section-title">Query {{ q.num_str }} — {{ q.question }}</h2>
+  <pre class="sql">{{ q.sql }}</pre>
+
+  <form method="post" class="form-actions">
+    <button class="btn btn-primary" type="submit" name="action" value="run">Run it</button>
+    {% if q.covered %}
+    <button class="btn btn-ghost" type="submit" name="action" value="check">Check my answer</button>
+    {% endif %}
+  </form>
+
+  {% if error %}
+  <div class="alert alert-error">{{ error }}</div>
+  {% endif %}
+
+  {% if check is not none %}
+    {% if check[0] %}
+    <div class="alert alert-ok">This query matches the sample answer in
+      <code>expected/{{ q.num_str }}_{{ q.name }}.txt</code>.</div>
+    {% else %}
+    <div class="alert alert-error">Doesn't match the sample answer yet:
+      <ul>
+      {% for p in check[1] %}
+        <li>{{ p }}</li>
+      {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  {% endif %}
+
+  {% if cols is not none %}
+  <h3 class="sub-title">Result — {{ rows | length }} row{{ "s" if rows | length != 1 }}
+    {% if rows | length == max_rows %}(capped at {{ max_rows }}){% endif %}</h3>
+  {% if rows %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>{% for c in cols %}<th>{{ c }}</th>{% endfor %}</tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>{% for v in row %}<td>{{ v | fmt if v is not none else "—" }}</td>{% endfor %}</tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="empty">The query ran but returned no rows.</p>
+  {% endif %}
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2 class="section-title">Try it yourself first</h2>
+  <p class="card-text">Read the question, write your own version in the
+    <a href="{{ url_for('practice') }}">SQL runner</a>, and compare it with
+    the answer above. {% if q.covered %}This one has a sample answer, so
+    "Check my answer" tells you whether your version matches.{% else %}This
+    one has no sample answer — compare the rows by eye.{% endif %}</p>
+</div>
+
+{% endblock %}

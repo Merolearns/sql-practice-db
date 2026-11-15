@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}sql-practice-db{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1><a href="{{ url_for('index') }}">sql-practice-db</a></h1>
+    <p class="subtitle">A tiny fake company database and 40 SQL practice
+      queries, from your first SELECT to window functions. Everything
+      runs locally on SQLite — the numbers on these pages come straight
+      from company.db.</p>
+    <nav>
+      <a href="{{ url_for('index') }}">Home</a>
+      <span class="nav-sep">&middot;</span>
+      <a href="{{ url_for('practice') }}">Try your own SQL</a>
+      <span class="nav-sep">&middot;</span>
+      <a href="{{ url_for('schema_page') }}">Browse the tables</a>
+    </nav>
+  </header>
+
+  {% block content %}{% endblock %}
+
+  <footer>
+    <p class="muted">sql-practice-db — all data is randomly generated and
+      fictional. No real people, no real company. The command-line tools
+      (<code>build.sh</code>, <code>check.py</code>) still work exactly as
+      before; this web UI is just a friendlier front end.</p>
+  </footer>
+</div>
+</body>
+</html>

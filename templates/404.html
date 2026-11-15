@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Not found — sql-practice-db{% endblock %}
+{% block content %}
+<div class="card">
+  <h2 class="section-title">Nothing here</h2>
+  <p class="empty">That page or query doesn't exist. The queries are
+    numbered 01 to 40, and the tables are departments, employees,
+    projects, employee_projects, and sales.</p>
+  <p><a href="{{ url_for('index') }}">&larr; Back home</a></p>
+</div>
+{% endblock %}
