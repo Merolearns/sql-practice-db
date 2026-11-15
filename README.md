@@ -13,7 +13,39 @@ A tiny fake company database plus 40 SQL practice queries that go from "what's a
 
 All data is randomly generated and fictional. No real people, no real company.
 
-## Build it
+## Web UI
+
+The same database and queries, in the browser — no SQL client needed:
+
+```bash
+pip install -r requirements.txt
+python3 app.py
+```
+
+Then open http://127.0.0.1:5000. If `company.db` doesn't exist yet,
+the app builds it for you on startup (same steps as `build.sh`).
+
+- **Home** — live stats from the database (200 employees, 6 departments,
+  15 projects, 700 sales, average salary $103,180), the 5-table schema,
+  and the 40-query index grouped by topic.
+- **Query pages** — each query shows its plain-English question and the
+  SQL, a "Run it" button that executes the repo's query file and renders
+  the result as a table, and — for the 10 queries with a sample answer —
+  a "Check my answer" button that runs the same comparison as
+  `check.py`. For example, query 07 returns one row: headcount 200,
+  average salary 103180, lowest 45000, highest 172000.
+- **Try your own SQL** — a free-form runner for your own SELECTs. The
+  connection is read-only and only SELECT (and WITH ... SELECT) is
+  accepted, so nothing you type can change the data. Results are capped
+  at 200 rows; errors are shown in plain English.
+- **Browse the tables** — pick one of the 5 tables to see its columns
+  and first 20 rows.
+
+The web UI is a thin layer over the files already here: `app.py` reads
+`queries/*.sql` and reuses `check.py`'s sample-answer parsing. The
+command-line tools below work exactly as before.
+
+## Build it (command line)
 
 You need Python 3 and the `sqlite3` command-line tool. That's it — no pip packages, stdlib only.
 
