@@ -87,6 +87,17 @@ def main() -> None:
     con = sqlite3.connect(DB)
     cur = con.cursor()
 
+    # Seeding twice used to silently double every row, and then the sample
+    # answers in expected/ stopped matching with no clue why. Refuse a
+    # second run on the same database -- ./build.sh rebuilds from scratch.
+    seeded = cur.execute(
+        "SELECT COUNT(*) FROM sqlite_master"
+        " WHERE type = 'table' AND name = 'employees'"
+    ).fetchone()[0]
+    if seeded and cur.execute("SELECT COUNT(*) FROM employees").fetchone()[0]:
+        print(f"{DB.name} is already seeded -- run ./build.sh to rebuild it")
+        raise SystemExit(1)
+
     # --- departments -----------------------------------------------------
     dept_ids = {}
     for name in DEPARTMENTS:
