@@ -87,6 +87,48 @@ def test_practice_rejects_a_delete(client):
     ).data.count(b"200") >= 1
 
 
+def test_practice_accepts_block_comment_before_select(client):
+    # a /* */ comment before the SELECT used to trip the guard with a
+    # misleading "Only SELECT" error even though it is a SELECT
+    resp = client.post(
+        "/practice",
+        data={"sql": "/* headcount */ SELECT COUNT(*) AS n FROM employees;"},
+    )
+    assert resp.status_code == 200
+    assert b"Only SELECT" not in resp.data
+    assert b"200" in resp.data
+
+
+def test_practice_accepts_with_select(client):
+    resp = client.post(
+        "/practice",
+        data={"sql": "WITH one AS (SELECT 200 AS n) SELECT n FROM one;"},
+    )
+    assert resp.status_code == 200
+    assert b"Only SELECT" not in resp.data
+    assert b"200" in resp.data
+
+
+def test_practice_rejects_with_delete(client):
+    # WITH ... DELETE used to pass the guard (first word WITH) and die
+    # on the read-only connection with a raw sqlite error
+    resp = client.post(
+        "/practice",
+        data={
+            "sql": "WITH x AS (SELECT 1 AS n) "
+            "DELETE FROM employees WHERE id = 1;"
+        },
+    )
+    assert resp.status_code == 200
+    assert b"Only SELECT" in resp.data
+    assert b"readonly" not in resp.data
+    # and the table is untouched
+    assert client.post(
+        "/practice",
+        data={"sql": "SELECT COUNT(*) AS n FROM employees;"},
+    ).data.count(b"200") >= 1
+
+
 def test_practice_shows_plain_error_for_bad_sql(client):
     resp = client.post("/practice", data={"sql": "SELECT * FROM nope;"})
     assert resp.status_code == 200

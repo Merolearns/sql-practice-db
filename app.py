@@ -74,6 +74,103 @@ def _connect(read_only=False):
     return sqlite3.connect(DB)
 
 
+def _skip_ws_comments(text, i):
+    """Advance past whitespace, -- line comments and /* */ comments."""
+    n = len(text)
+    while i < n:
+        if text[i].isspace():
+            i += 1
+        elif text.startswith("--", i):
+            j = text.find("\n", i)
+            i = n if j == -1 else j + 1
+        elif text.startswith("/*", i):
+            j = text.find("*/", i + 2)
+            i = n if j == -1 else j + 2
+        else:
+            break
+    return i
+
+
+def _read_word(text, i):
+    """(word, next index) at i, or ("", i) if no word starts there."""
+    m = re.match(r"[A-Za-z_][A-Za-z0-9_]*", text[i:])
+    return (m.group(0), i + len(m.group(0))) if m else ("", i)
+
+
+def _skip_parens(text, i):
+    """Skip one balanced (...) group, ignoring parens inside 'strings'."""
+    n = len(text)
+    depth = 0
+    while i < n:
+        ch = text[i]
+        if ch == "'":
+            i += 1
+            while i < n:
+                if text[i] == "'":
+                    if text[i + 1:i + 2] == "'":
+                        i += 2
+                        continue
+                    i += 1
+                    break
+                i += 1
+            continue
+        if ch == "(":
+            depth += 1
+        elif ch == ")":
+            depth -= 1
+            i += 1
+            if depth == 0:
+                return i
+            continue
+        i += 1
+    return i
+
+
+def _statement_keyword(sql):
+    """Keyword of the statement that will actually run.
+
+    Skips leading whitespace and -- and /* */ comments. For WITH,
+    skips the CTE definitions and returns the keyword of the statement
+    after them, so WITH ... DELETE is caught here instead of failing
+    on the read-only connection with a raw sqlite error. A statement
+    it can't parse returns "" (or the wrong word) and is rejected,
+    never allowed.
+    """
+    i = _skip_ws_comments(sql, 0)
+    word, i = _read_word(sql, i)
+    if word.upper() != "WITH":
+        return word.upper()
+    # WITH [RECURSIVE] name [(cols)] AS [NOT] MATERIALIZED (select) [, ...]
+    i = _skip_ws_comments(sql, i)
+    word, i = _read_word(sql, i)
+    if word.upper() == "RECURSIVE":
+        i = _skip_ws_comments(sql, i)
+    while True:
+        _, i = _read_word(sql, i)  # CTE name
+        i = _skip_ws_comments(sql, i)
+        if i < len(sql) and sql[i] == "(":  # optional column list
+            i = _skip_parens(sql, i)
+            i = _skip_ws_comments(sql, i)
+        _, i = _read_word(sql, i)  # AS
+        i = _skip_ws_comments(sql, i)
+        word, i = _read_word(sql, i)
+        if word.upper() == "NOT":
+            i = _skip_ws_comments(sql, i)
+            _, i = _read_word(sql, i)  # MATERIALIZED
+            i = _skip_ws_comments(sql, i)
+        elif word.upper() == "MATERIALIZED":
+            i = _skip_ws_comments(sql, i)
+        if i < len(sql) and sql[i] == "(":  # the CTE body
+            i = _skip_parens(sql, i)
+        i = _skip_ws_comments(sql, i)
+        if i < len(sql) and sql[i] == ",":
+            i = _skip_ws_comments(sql, i + 1)
+            continue
+        break
+    word, _ = _read_word(sql, i)
+    return word.upper()
+
+
 def _run(sql, read_only=False):
     """Run one SELECT and return (columns, rows) — rows capped at 200."""
     con = _connect(read_only=read_only)
@@ -217,14 +314,11 @@ def practice():
     cols = rows = None
     error = None
     if request.method == "POST":
-        # only read-only statements, against a read-only connection.
-        # Leading -- comments don't count; the first real word decides.
-        stripped = "\n".join(
-            line for line in sql.splitlines()
-            if not line.lstrip().startswith("--")).strip()
-        first_word = re.split(r"[\s(]+", stripped, 1)
-        keyword = first_word[0].upper() if first_word else ""
-        if keyword not in ("SELECT", "WITH"):
+        # only SELECT statements, against a read-only connection.
+        # _statement_keyword looks past leading comments and any
+        # WITH ... CTE definitions, so the word it returns is the
+        # statement that will actually run.
+        if _statement_keyword(sql) != "SELECT":
             error = ("Only SELECT (and WITH ... SELECT) statements are "
                      "allowed here — no INSERT, UPDATE, DELETE, DROP, "
                      "or anything that changes the database.")
