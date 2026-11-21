@@ -56,6 +56,12 @@
   {% endif %}
 </div>
 
+<p class="crumb">
+  {% if prev_q %}<a href="{{ url_for('query_page', num=prev_q.num) }}">&larr; {{ prev_q.num_str }} — {{ prev_q.question }}</a>{% endif %}
+  {% if prev_q and next_q %} &middot; {% endif %}
+  {% if next_q %}<a href="{{ url_for('query_page', num=next_q.num) }}">{{ next_q.num_str }} — {{ next_q.question }} &rarr;</a>{% endif %}
+</p>
+
 <div class="card">
   <h2 class="section-title">Try it yourself first</h2>
   <p class="card-text">Read the question, write your own version in the

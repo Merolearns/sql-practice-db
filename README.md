@@ -32,7 +32,8 @@ the app builds it for you on startup (same steps as `build.sh`).
   SQL, a "Run it" button that executes the repo's query file and renders
   the result as a table, and — for the 10 queries with a sample answer —
   a "Check my answer" button that runs the same comparison as
-  `check.py`. For example, query 07 returns one row: headcount 200,
+  `check.py`. Each page also links to the previous and next query, so
+  you can work through all 40 in order. For example, query 07 returns one row: headcount 200,
   average salary 103180, lowest 45000, highest 172000.
 - **Try your own SQL** — a free-form runner for your own SELECTs. The
   connection is read-only and only SELECT (and WITH ... SELECT) is

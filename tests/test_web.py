@@ -59,6 +59,16 @@ def test_query_page_get_shows_sql_without_running(client):
     assert b"Check my answer" in resp.data  # 26 is one of the covered ten
 
 
+def test_query_page_links_to_prev_and_next(client):
+    resp = client.get("/query/07")
+    assert resp.status_code == 200
+    assert b'href="/query/6"' in resp.data
+    assert b'href="/query/8"' in resp.data
+    # the ends of the course link one way only, never off the end
+    assert b'href="/query/0"' not in client.get("/query/01").data
+    assert b'href="/query/41"' not in client.get("/query/40").data
+
+
 def test_unknown_query_number_404s(client):
     assert client.get("/query/99").status_code == 404
     assert client.get("/query/0").status_code == 404

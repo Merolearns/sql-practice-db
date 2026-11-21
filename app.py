@@ -303,6 +303,7 @@ def query_page(num):
     return render_template(
         "query.html", q=q, cols=cols, rows=rows,
         check=check, error=error, max_rows=MAX_ROWS,
+        prev_q=BY_NUM.get(num - 1), next_q=BY_NUM.get(num + 1),
     )
 
 
