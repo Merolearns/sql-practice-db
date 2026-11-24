@@ -319,7 +319,9 @@ def practice():
         # _statement_keyword looks past leading comments and any
         # WITH ... CTE definitions, so the word it returns is the
         # statement that will actually run.
-        if _statement_keyword(sql) != "SELECT":
+        if not sql:
+            error = "Type a query first — the box is empty."
+        elif _statement_keyword(sql) != "SELECT":
             error = ("Only SELECT (and WITH ... SELECT) statements are "
                      "allowed here — no INSERT, UPDATE, DELETE, DROP, "
                      "or anything that changes the database.")
@@ -327,7 +329,15 @@ def practice():
             try:
                 cols, rows = _run(sql, read_only=True)
             except sqlite3.Error as exc:
-                error = f"That didn't run: {exc}"
+                if "only execute one statement" in str(exc):
+                    # pasting two queries at once is the usual cause;
+                    # sqlite's wording ("You can only execute one
+                    # statement at a time") means nothing to a learner
+                    error = ("Run one statement at a time — this box "
+                             "takes a single query. Remove everything "
+                             "after the first semicolon and run it again.")
+                else:
+                    error = f"That didn't run: {exc}"
     return render_template(
         "practice.html", sql=sql, cols=cols, rows=rows,
         error=error, max_rows=MAX_ROWS,

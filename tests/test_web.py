@@ -146,6 +146,30 @@ def test_practice_shows_plain_error_for_bad_sql(client):
     assert b"Traceback" not in resp.data
 
 
+def test_practice_rejects_two_statements_with_plain_message(client):
+    # pasting two queries used to surface sqlite's raw wording
+    resp = client.post(
+        "/practice",
+        data={"sql": "SELECT COUNT(*) AS n FROM employees; SELECT 1;"},
+    )
+    assert resp.status_code == 200
+    assert b"one statement at a time" in resp.data
+    assert b"You can only execute" not in resp.data
+    # and the table is untouched
+    assert client.post(
+        "/practice",
+        data={"sql": "SELECT COUNT(*) AS n FROM employees;"},
+    ).data.count(b"200") >= 1
+
+
+def test_practice_empty_input_says_type_a_query_first(client):
+    # an empty box used to get the misleading "Only SELECT" error
+    resp = client.post("/practice", data={"sql": ""})
+    assert resp.status_code == 200
+    assert b"Type a query first" in resp.data
+    assert b"Only SELECT" not in resp.data
+
+
 def test_schema_lists_tables_and_rows(client):
     resp = client.get("/schema?table=departments")
     assert resp.status_code == 200
