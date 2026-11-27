@@ -126,6 +126,32 @@ def _skip_parens(text, i):
     return i
 
 
+def _skip_identifier(text, i):
+    """Skip one identifier at i: a bare word, or a quoted one.
+
+    SQLite lets a CTE be named "one", `one` or [one] as well as one --
+    _read_word matches none of the quoted forms, so WITH "one" AS ...
+    used to come back with no keyword at all and the practice page
+    rejected a plain SELECT with a misleading "Only SELECT" error.
+    An unterminated quote returns i unchanged, so the statement is
+    rejected, never allowed.
+    """
+    if i < len(text) and text[i] in "\"`[":
+        closer = {"\"": "\"", "`": "`", "[": "]"}[text[i]]
+        j = i + 1
+        n = len(text)
+        while j < n:
+            if text[j] == closer:
+                if closer == "\"" and text[j + 1:j + 2] == "\"":
+                    j += 2  # "" inside a "..." name is an escaped quote
+                    continue
+                return j + 1
+            j += 1
+        return i
+    _, i = _read_word(text, i)
+    return i
+
+
 def _statement_keyword(sql):
     """Keyword of the statement that will actually run.
 
@@ -146,7 +172,7 @@ def _statement_keyword(sql):
     if word.upper() == "RECURSIVE":
         i = _skip_ws_comments(sql, i)
     while True:
-        _, i = _read_word(sql, i)  # CTE name
+        i = _skip_identifier(sql, i)  # CTE name, bare or quoted
         i = _skip_ws_comments(sql, i)
         if i < len(sql) and sql[i] == "(":  # optional column list
             i = _skip_parens(sql, i)

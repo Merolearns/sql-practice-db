@@ -119,6 +119,33 @@ def test_practice_accepts_with_select(client):
     assert b"200" in resp.data
 
 
+def test_practice_accepts_quoted_cte_name(client):
+    # a quoted CTE name ("one") used to trip the guard with a misleading
+    # "Only SELECT" error even though it is a plain SELECT
+    resp = client.post(
+        "/practice",
+        data={"sql": 'WITH "one" AS (SELECT 200 AS n) SELECT n FROM "one";'},
+    )
+    assert resp.status_code == 200
+    assert b"Only SELECT" not in resp.data
+    assert b"200" in resp.data
+
+
+def test_practice_rejects_quoted_cte_delete(client):
+    # the quoted-name fix must not open a hole: WITH "x" ... DELETE
+    # still gets the "Only SELECT" error, not a raw sqlite error
+    resp = client.post(
+        "/practice",
+        data={
+            "sql": 'WITH "x" AS (SELECT 1 AS n) '
+            "DELETE FROM employees WHERE id = 1;"
+        },
+    )
+    assert resp.status_code == 200
+    assert b"Only SELECT" in resp.data
+    assert b"readonly" not in resp.data
+
+
 def test_practice_rejects_with_delete(client):
     # WITH ... DELETE used to pass the guard (first word WITH) and die
     # on the read-only connection with a raw sqlite error
